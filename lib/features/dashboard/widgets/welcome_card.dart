@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/app_text_styles.dart';
+
 class WelcomeCard extends StatelessWidget {
   final dynamic user;
 
@@ -13,42 +17,87 @@ class WelcomeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(22.w),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.r),
-        gradient: const LinearGradient(
+        borderRadius: BorderRadius.circular(24.r),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            Colors.blue,
-            Colors.indigo,
+            AppColors.primary,
+            AppColors.primaryDark,
           ],
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.18),
+            blurRadius: 22,
+            spreadRadius: 4,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            'Welcome Back 👋',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14.sp,
+          Container(
+            width: 58.w,
+            height: 58.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.18),
             ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            user?.name ?? 'Sales User',
-            style: TextStyle(
+            child: Icon(
+              Icons.person_outline,
               color: Colors.white,
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
+              size: 28.sp,
             ),
           ),
-          SizedBox(height: 8.h),
-          Text(
-            user?.email ?? '',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13.sp,
+
+          SizedBox(width: 16.w),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.welcome,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: Colors.white70,
+                    fontSize: 13.sp,
+                  ),
+                ),
+
+                SizedBox(height: 6.h),
+
+                Text(
+                  user?.name ?? AppStrings.salesUser,
+                  style: AppTextStyles.heading3.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                SizedBox(height: 6.h),
+
+                Text(
+                  user?.email ?? '',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: Colors.white70,
+                    fontSize: 12.sp,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
+          ),
+
+          Icon(
+            Icons.trending_up_rounded,
+            color: Colors.white.withOpacity(0.25),
+            size: 42.sp,
           ),
         ],
       ),

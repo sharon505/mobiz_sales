@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/app_text_styles.dart';
 import '../../auth/view_models/auth_view_model.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/logout_button.dart';
@@ -16,75 +19,150 @@ class DashboardScreen extends StatelessWidget {
     final user = auth.loginResponse?.user;
 
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('Dashboard'),
-        centerTitle: true,
         elevation: 0,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            WelcomeCard(user: user),
-
-            SizedBox(height: 30.h),
-
-            Text(
-              'Quick Actions',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
+        backgroundColor: AppColors.transparent,
+        leading: Center(
+          child: Container(
+            width: 38.w,
+            height: 38.h,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
               ),
             ),
+            child: Icon(
+              Icons.dashboard_customize_rounded,
+              color: Colors.white,
+              size: 21.sp,
+            ),
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.primaryDark,
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          AppStrings.appName,
+          style: AppTextStyles.title.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        actions: [
+          LogoutActionButton(auth: auth),
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.primary.withOpacity(0.05),
+              AppColors.scaffoldBackground,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              WelcomeCard(user: user),
 
-            SizedBox(height: 20.h),
+              SizedBox(height: 28.h),
 
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.w,
-                mainAxisSpacing: 16.h,
-                childAspectRatio: 1.1,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DashboardCard(
-                    title: 'Customers',
-                    icon: Icons.people_alt_outlined,
-                    color: Colors.orange,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/customers');
-                    },
+                  Text(
+                    AppStrings.quickActions,
+                    style: AppTextStyles.title.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                  DashboardCard(
-                    title: 'Products',
-                    icon: Icons.inventory_2_outlined,
-                    color: Colors.green,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/products');
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Create Invoice',
-                    icon: Icons.receipt_long_outlined,
-                    color: Colors.purple,
-                    onTap: () {},
-                  ),
-                  DashboardCard(
-                    title: 'Invoice List',
-                    icon: Icons.list_alt_outlined,
-                    color: Colors.red,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/invoice-list');
-                    },
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      '4 Modules',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
+              SizedBox(height: 20.h),
+              Expanded(
+                child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: 2,
+                  separatorBuilder: (context, index) => SizedBox(height: 14.h),
+                  itemBuilder: (context, index) {
+                    final items = [
+                      {
+                        'title': AppStrings.customers,
+                        'subtitle': 'Manage customer records',
+                        'icon': Icons.people_alt_outlined,
+                        'route': '/customers',
+                      },
+                      // {
+                      //   'title': AppStrings.products,
+                      //   'subtitle': 'Browse product catalog',
+                      //   'icon': Icons.inventory_2_outlined,
+                      //   'route': '/products',
+                      // },
+                      // {
+                      //   'title': AppStrings.createInvoice,
+                      //   'subtitle': 'Generate new invoices',
+                      //   'icon': Icons.receipt_long_outlined,
+                      //   'route': '/create-invoice',
+                      // },
+                      {
+                        'title': AppStrings.invoiceList,
+                        'subtitle': 'View all invoices',
+                        'icon': Icons.list_alt_outlined,
+                        'route': '/invoice-list',
+                      },
+                    ];
 
-            SizedBox(height: 10.h),
+                    final item = items[index];
 
-            LogoutButton(auth: auth),
-          ],
+                    return DashboardCard(
+                      title: item['title'] as String,
+                      subtitle: item['subtitle'] as String,
+                      icon: item['icon'] as IconData,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          item['route'] as String,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

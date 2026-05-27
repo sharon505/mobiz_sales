@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/app_text_styles.dart';
 import '../models/product_model.dart';
 
 class ProductHeaderCard extends StatelessWidget {
@@ -11,41 +16,141 @@ class ProductHeaderCard extends StatelessWidget {
     required this.product,
   });
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _infoChip({
+    required IconData icon,
+    required String text,
+    bool highlight = false,
+  }) {
     return Container(
-      width: double.infinity,
-      margin: EdgeInsets.all(16.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
+      padding: EdgeInsets.symmetric(
+        horizontal: 10.w,
+        vertical: 6.h,
       ),
-      child: Column(
+      decoration: BoxDecoration(
+        color: highlight
+            ? AppColors.primary.withOpacity(0.08)
+            : Colors.white.withOpacity(0.45),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: highlight
+              ? AppColors.primary.withOpacity(0.15)
+              : Colors.white.withOpacity(0.35),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 35.r,
-            child: Icon(
-              Icons.inventory_2_outlined,
-              size: 30.sp,
+          Icon(
+            icon,
+            size: 14.sp,
+            color: highlight
+                ? AppColors.primary
+                : AppColors.textSecondary,
+          ),
+          SizedBox(width: 6.w),
+          Text(
+            text,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: highlight
+                  ? AppColors.primary
+                  : AppColors.textSecondary,
+              fontWeight:
+              highlight ? FontWeight.w700 : FontWeight.w500,
             ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            product.name,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            "Base Price: ₹ ${product.price}",
-          ),
-          Text(
-            "Tax: ${product.taxPercentage}%",
           ),
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20.r),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 10,
+          sigmaY: 10,
+        ),
+        child: Container(
+          margin: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(14.w),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.65),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.35),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.06),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primaryDark,
+                    ],
+                  ),
+                ),
+                child: Icon(
+                  Icons.inventory_2_outlined,
+                  color: Colors.white,
+                  size: 26.sp,
+                ),
+              ),
+
+              SizedBox(width: 14.w),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+
+                    SizedBox(height: 10.h),
+
+                    Wrap(
+                      spacing: 8.w,
+                      runSpacing: 8.h,
+                      children: [
+                        _infoChip(
+                          icon: Icons.currency_rupee_rounded,
+                          text:
+                          '${AppStrings.basePrice}: ${product.price}',
+                          highlight: true,
+                        ),
+                        _infoChip(
+                          icon: Icons.percent_rounded,
+                          text:
+                          '${AppStrings.tax}: ${product.taxPercentage}%',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

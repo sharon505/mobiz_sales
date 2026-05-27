@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -6,6 +7,7 @@ import 'package:provider/single_child_widget.dart';
 import 'features/auth/view_models/auth_view_model.dart';
 import 'features/auth/view_models/user_detail_view_model.dart';
 import 'features/auth/views/login_screen.dart';
+import 'features/auth/views/splash_screen.dart';
 import 'features/customers/viewmodels/customer_view_model.dart';
 import 'features/customers/views/customer_list_screen.dart';
 import 'features/dashboard/views/dashboard_screen.dart';
@@ -19,8 +21,10 @@ import 'features/product/viewmodels/product_view_model.dart';
 import 'features/product/views/product_detail_screen.dart';
 import 'features/product/views/product_list_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Phoenix(child: const MyApp()),
+  );
 }
 
 List<SingleChildWidget> providers = [
@@ -39,6 +43,8 @@ List<SingleChildWidget> providers = [
 ];
 
 Map<String, Widget Function(BuildContext)> routes = <String, WidgetBuilder>{
+  '/': (context) => const SplashScreen(),
+  '/Login': (context) => const LoginScreen(),
   '/dashboard': (context) => const DashboardScreen(),
   '/customers': (context) => const CustomerListScreen(),
   '/products': (context) => const ProductListScreen(),
@@ -75,6 +81,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             routes: routes,
+            initialRoute: '/',
             debugShowCheckedModeBanner: false,
             title: 'Mobiz Sales',
             theme: ThemeData(
@@ -82,7 +89,6 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: Colors.white,
               useMaterial3: true,
             ),
-            home: const LoginScreen(),
           );
         },
       ),

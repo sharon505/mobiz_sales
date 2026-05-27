@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../auth/view_models/auth_view_model.dart';
-import '../../customers/models/customer_model.dart';
-import '../../product/models/product_model.dart';
+import '../../../utils/constants/app_colors.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/app_text_styles.dart';
 import '../controllers/invoice_controller.dart';
-import '../models/create_In_voice_request_model.dart';
 import '../viewmodels/invoice_view_model.dart';
 import '../widgets/info_tile.dart';
 import '../widgets/quantity_selector.dart';
@@ -19,8 +18,6 @@ class InvoicePage extends StatefulWidget {
   @override
   State<InvoicePage> createState() => _InvoicePageState();
 }
-
-// keep your imports
 
 class _InvoicePageState extends State<InvoicePage> {
   final InvoiceController controller = InvoiceController();
@@ -43,70 +40,142 @@ class _InvoicePageState extends State<InvoicePage> {
     super.dispose();
   }
 
+  Widget _buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(
+        color: AppColors.primary,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (controller.customer == null || controller.product == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+      return Scaffold(
+        backgroundColor: AppColors.scaffoldBackground,
+        body: _buildLoading(),
       );
     }
 
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
-        title: const Text("Create Invoice"),
+        elevation: 0,
+        backgroundColor: AppColors.transparent,
+        leading: Center(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12.r),
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 38.w,
+              height: 38.h,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                ),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 18.sp,
+              ),
+            ),
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.primaryDark,
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          AppStrings.createInvoice,
+          style: AppTextStyles.title.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Consumer<InvoiceViewModel>(
         builder: (context, invoiceVM, child) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              children: [
-                InfoTile(
-                  title: "Customer",
-                  value: controller.customer!.name,
-                ),
-                InfoTile(
-                  title: "Product",
-                  value: controller.product!.name,
-                ),
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primary.withOpacity(0.04),
+                  AppColors.scaffoldBackground,
+                  Colors.white,
+                ],
+              ),
+            ),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  InfoTile(
+                    title: AppStrings.customer,
+                    value: controller.customer!.name,
+                    icon: Icons.person_outline_rounded,
+                  ),
 
-                UnitDropdown(
-                  selectedUnit: controller.selectedUnit,
-                  units: controller.product!.units,
-                  onChanged: (value) {
-                    setState(() {
-                      controller.selectedUnit = value;
-                    });
-                  },
-                ),
+                  InfoTile(
+                    title: AppStrings.product,
+                    value: controller.product!.name,
+                    icon: Icons.inventory_2_outlined,
+                    highlight: true,
+                  ),
 
-                SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
 
-                QuantitySelector(
-                  quantity: controller.quantity,
-                  onIncrement: () {
-                    setState(() {
-                      controller.quantity++;
-                    });
-                  },
-                  onDecrement: controller.quantity > 1
-                      ? () {
-                    setState(() {
-                      controller.quantity--;
-                    });
-                  }
-                      : null,
-                ),
+                  UnitDropdown(
+                    selectedUnit: controller.selectedUnit,
+                    units: controller.product!.units,
+                    onChanged: (value) {
+                      setState(() {
+                        controller.selectedUnit = value;
+                      });
+                    },
+                  ),
 
-                SubmitInvoiceButton(
-                  isLoading: invoiceVM.isLoading,
-                  onPressed: () {
-                    controller.submitInvoice(context);
-                  },
-                ),
-              ],
+                  SizedBox(height: 16.h),
+
+                  QuantitySelector(
+                    quantity: controller.quantity,
+                    onIncrement: () {
+                      setState(() {
+                        controller.quantity++;
+                      });
+                    },
+                    onDecrement: controller.quantity > 1
+                        ? () {
+                      setState(() {
+                        controller.quantity--;
+                      });
+                    }
+                        : null,
+                  ),
+
+                  SizedBox(height: 24.h),
+
+                  SubmitInvoiceButton(
+                    isLoading: invoiceVM.isLoading,
+                    onPressed: () {
+                      controller.submitInvoice(context);
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         },
