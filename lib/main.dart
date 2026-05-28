@@ -43,14 +43,14 @@ List<SingleChildWidget> providers = [
 ];
 
 Map<String, Widget Function(BuildContext)> routes = <String, WidgetBuilder>{
-  '/': (context) => const SplashScreen(),
-  '/Login': (context) => const LoginScreen(),
-  '/dashboard': (context) => const DashboardScreen(),
-  '/customers': (context) => const CustomerListScreen(),
-  '/products': (context) => const ProductListScreen(),
-  '/invoice': (context) => const InvoicePage(),
-  '/invoice-list': (context) => const InvoiceListScreen(),
-  '/product-detail': (context) => const ProductDetailScreen(),
+  '/':                    (context) => const SplashScreen(),
+  '/Login':               (context) => const LoginScreen(),
+  '/dashboard':           (context) => const DashboardScreen(),
+  '/customers':           (context) => const CustomerListScreen(),
+  '/products':            (context) => const ProductListScreen(),
+  '/invoice':             (context) => const InvoicePage(),
+  '/invoice-list':        (context) => const InvoiceListScreen(),
+  '/product-detail':      (context) => const ProductDetailScreen(),
 };
 
 class MyApp extends StatelessWidget {
